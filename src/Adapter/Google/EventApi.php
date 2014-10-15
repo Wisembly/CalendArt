@@ -87,6 +87,13 @@ class EventApi implements EventApiInterface
             $query = $query->merge($criterion);
         }
 
+        try {
+            $showDeleted = (bool) $query->getCriterion('showDeleted');
+        } catch (CriterionNotFoundException $e) {
+            $showDeleted = false;
+        }
+
+
         $query = $query->build();
 
         do {
@@ -105,6 +112,11 @@ class EventApi implements EventApiInterface
             $result = $response->json();
 
             foreach ($result['items'] as $item) {
+                // ignore the short cancelled recurring events
+                if ($showDeleted && isset($item['status']) && AbstractEvent::STATUS_CANCELLED === $item['status']) {
+                    continue;
+                }
+
                 $list[$item['id']] = Event::hydrate($this->calendar, $item);
             }
 
