@@ -51,6 +51,9 @@ class BasicEvent extends AbstractEvent
     /** @var string Event's visibility */
     private $visibility = self::VISIBILITY_DEFAULT;
 
+    /** @var string Event's public link */
+    private $htmlLink;
+
     /** @return Datetime */
     public function getCreatedAt()
     {
@@ -104,6 +107,11 @@ class BasicEvent extends AbstractEvent
         $this->stackable = (bool) $stackable;
 
         return $this;
+    }
+
+    public function getHtmlLink()
+    {
+        return $this->htmlLink;
     }
 
     /**
@@ -163,6 +171,10 @@ class BasicEvent extends AbstractEvent
 
         if (isset($data['transparent'])) {
             $event->stackable = true === $data['transparent'];
+        }
+
+        if (isset($data['htmlLink'])) {
+            $event->htmlLink = $data['htmlLink'];
         }
 
         $owner = static::buildUser($data['creator'])->addEvent($event);

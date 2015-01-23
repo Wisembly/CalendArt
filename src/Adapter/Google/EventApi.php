@@ -56,6 +56,7 @@ class EventApi implements EventApiInterface
                          new Field('start'),
                          new Field('status'),
                          new Field('created'),
+                         new Field('htmlLink'),
                          new Field('updated'),
                          new Field('summary'),
                          new Field('location'),
