@@ -56,6 +56,7 @@ class EventApi implements EventApiInterface
                          new Field('start'),
                          new Field('status'),
                          new Field('created'),
+                         new Field('htmlLink'),
                          new Field('updated'),
                          new Field('summary'),
                          new Field('location'),
@@ -147,6 +148,17 @@ class EventApi implements EventApiInterface
         }
 
         $response = $this->guzzle->get(sprintf('calendars/%s/events/%s', $this->calendar->getId(), $identifier), ['query' => $query->build()]);
+
+        if (200 > $response->getStatusCode() || 300 <= $response->getStatusCode()) {
+            throw new ApiErrorException($response);
+        }
+
+        return BasicEvent::hydrate($this->calendar, $response->json());
+    }
+
+    public function edit($identifier, array $data = [])
+    {
+        $response = $this->guzzle->patch(sprintf('calendars/%s/events/%s', $this->calendar->getId(), $identifier), ['body' => $data]);
 
         if (200 > $response->getStatusCode() || 300 <= $response->getStatusCode()) {
             throw new ApiErrorException($response);
